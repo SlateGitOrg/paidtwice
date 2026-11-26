@@ -131,7 +131,7 @@ Legitimate look-alikes among the 200 queued pairs:
 | recurring | 0 | 85 |
 | total | 0 | 145 |
 
-Without the rules, 145 of the 200 slots go to legitimate payments. The credit memo count without suppression comes from re-bill pairs (an invoice and its corrected re-bill); the memo-to-invoice pairs score lower because their signed amounts differ.
+Without the rules, 145 of the 200 slots go to legitimate payments. The credit memo count without suppression comes from re-bill pairs (an invoice and its corrected re-bill); the memo-to-invoice pairs score lower because the memo's `CM-` number rarely matches its invoice's (the invoice level is `different` for 114 of the 120 pairs and `dl2` for the rest, and most have no PO to agree on), not because of the amount: the amount levels carry weight 0 (see the design decisions).
 
 First ten rows of `queue.csv` (columns trimmed; all ten tie on score, so amount at risk orders them):
 
@@ -162,8 +162,8 @@ Every row also has `matched_levels` (for example `invoice=canonical_equal;amount
 
 Two limits on how to read the evaluation:
 
-- **Recall of 1.0 depends on the generator.** Outside the planted groups a synthetic vendor never bills the same dollar amount twice, and 92% of vendors put a vendor-specific three-letter prefix on their invoice numbers (the rest use bare numbers drawn from a wide range). Both choices keep natural near-matches rare. A real ledger has more of them, and recall and the EM weights would be worse.
-- **Precision is capped at 0.9.** Only 180 duplicates are planted and the budget is 200, so at least 20 queue slots hold something else. Those slots hold natural near-matches, not look-alikes: with suppression the queue has no recurring, installment or credit memo pair.
+- **Recall of 1.0 depends on the generator.** Outside the planted groups a synthetic vendor never bills the same dollar amount twice, and 92% of vendors put a vendor-specific three-letter prefix on their invoice numbers (the rest use bare numbers drawn from a wide range). Both choices make accidental coincidences on amount or invoice number rare, which a real ledger would not.
+- **Precision is capped at 0.9.** Only 180 duplicates are planted and the budget is 200, so at least 20 queue slots hold something else. With seed 42 the 20 unplanted slots (ranks 181 to 200) score below zero: nearly all are payments to different vendors with different invoice numbers that share only a round amount and a date within 10 days. They are not look-alikes: with suppression the queue has no recurring, installment or credit memo pair.
 
 ## Testing
 
