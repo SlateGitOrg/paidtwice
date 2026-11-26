@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "paidtwice"
+version = "0.1.0"
+description = "Duplicate payment detection with Fellegi-Sunter weights learned by EM, scored against planted duplicates and legitimate look-alikes."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [{ name = "paidtwice contributors" }]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5", "pyyaml>=6.0"]
+
+[project.scripts]
+paidtwice = "paidtwice.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/paidtwice"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
